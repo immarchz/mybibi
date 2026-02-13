@@ -1,35 +1,57 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [scale, setScale] = useState(1);
+  const [accepted, setAccepted] = useState(false);
+
+  const handleNo = () => {
+    setScale((prev) => Math.min(prev * 1.3, 5));
+  };
+
+  const reset = () => {
+    setScale(1);
+    setAccepted(false);
+  };
+
+  if (accepted) {
+    return (
+      <div className="yes-screen">
+        <img src="https://www.nylabone.com/-/media/project/oneweb/nylabone/images/dog101/10-intelligent-dog-breeds/golden-retriever-tongue-out.jpg?h=430&w=710&hash=7FEB820D235A44B76B271060E03572C7
+            " alt="Us 💕" />
+        <h1 className="text">
+          Best choice ever 💘
+          <br />
+          I love you 😍
+        </h1>
+        <button className="reset" onClick={reset}>
+          Reset 🔄
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
+    <div className="container">
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+        <h1>Will you be my Valentine? 💖</h1>
 
-export default App
+        <div className="buttons">
+          <button
+            className="yes"
+            style={{ transform: `scale(${scale})` }}
+            onClick={() => setAccepted(true)}
+          >
+            Yes 😍
+          </button>
+
+          {scale < 3 && (
+            <button className="no" onClick={handleNo}>
+              No 🙃
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
