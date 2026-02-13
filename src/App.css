@@ -9,31 +9,43 @@ body {
 
 /* Question screen */
 .container {
+  min-width: 100vw;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #ff9a9e, #fad0c4);
   padding: 20px;
+  position: relative;
+}
+
+.pink-text {
+  color: #ff4d6d;
+  font-size: 30px;
 }
 
 .text {
-  color: #ffff
+  color: #ffff;
+  font-size: 20px;
 }
 
 .card {
   width: 100%;
-  max-width: 420px;
+  max-width: none;
   background: white;
   padding: 30px 20px 50px;
-  border-radius: 20px;
+  border-radius: 0;
   text-align: center;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  animation: fadeUp 320ms ease-out;
 }
 
 h1 {
   color: #ff4d6d;
   margin-bottom: 30px;
+  max-width: 20ch;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .buttons {
@@ -44,12 +56,105 @@ h1 {
 }
 
 button {
-  padding: 14px 28px;
-  font-size: 18px;
+  padding: 16px 30px;
+  min-height: 52px;
+  font-size: 19px;
   border: none;
   border-radius: 14px;
   cursor: pointer;
   transition: transform 0.35s ease;
+  transform-origin: center;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  height: 0;
+  background: #ff4d6d;
+  z-index: 20;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: rise 1.2s ease-out forwards;
+}
+
+.loading-stack {
+  position: relative;
+  width: min(280px, 72vw);
+  height: min(360px, 90vw);
+}
+
+.polaroid-card {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px 14px 44px;
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.35);
+  transform-origin: center 120%;
+  opacity: 0;
+  animation: cardPull 2.5s ease-in-out forwards;
+  animation-fill-mode: both;
+}
+
+.polaroid-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+
+.polaroid-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  text-align: center;
+  font-size: 18px;
+  color: #333;
+  letter-spacing: 0.5px;
+}
+
+.polaroid-card:nth-child(1) {
+  z-index: 7;
+  animation-delay: 1.2s;
+}
+
+.polaroid-card:nth-child(2) {
+  z-index: 6;
+  animation-delay: 3.7s;
+}
+
+.polaroid-card:nth-child(3) {
+  z-index: 5;
+  animation-delay: 6.2s;
+}
+
+.polaroid-card:nth-child(4) {
+  z-index: 4;
+  animation-delay: 8.7s;
+}
+
+.polaroid-card:nth-child(5) {
+  z-index: 3;
+  animation-delay: 11.2s;
+}
+
+.polaroid-card:nth-child(6) {
+  z-index: 2;
+  animation-delay: 13.7s;
+}
+
+.polaroid-card:nth-child(7) {
+  z-index: 1;
+  animation-delay: 16.2s;
 }
 
 .yes {
@@ -63,6 +168,7 @@ button {
 
 /* Yes screen */
 .yes-screen {
+  min-width: 100vw;
   min-height: 100vh;
   background: #ff4d6d;
   color: white;
@@ -72,6 +178,7 @@ button {
   align-items: center;
   text-align: center;
   padding: 20px;
+  animation: fadeUp 320ms ease-out;
 }
 
 .yes-screen img {
@@ -98,4 +205,41 @@ button {
 .reset:hover {
   transform: scale(1.05);
   opacity: 0.9;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rise {
+  from {
+    height: 0;
+  }
+  to {
+    height: 100%;
+  }
+}
+
+@keyframes cardPull {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98) rotate(-2deg);
+  }
+  15% {
+    opacity: 1;
+  }
+  60% {
+    transform: translateY(-20px) scale(1.02) rotate(1deg);
+  }
+  100% {
+    transform: translateY(80px) scale(0.92) rotate(4deg);
+    opacity: 0;
+  }
 }

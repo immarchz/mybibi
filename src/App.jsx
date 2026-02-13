@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 export default function App() {
   const [scale, setScale] = useState(1);
   const [accepted, setAccepted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleNo = () => {
     setScale((prev) => Math.min(prev * 1.3, 5));
@@ -12,17 +13,30 @@ export default function App() {
   const reset = () => {
     setScale(1);
     setAccepted(false);
+    setLoading(false);
   };
+
+  useEffect(() => {
+    if (!loading) return;
+    const timer = setTimeout(() => {
+      setAccepted(true);
+      setLoading(false);
+    }, 18000);
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   if (accepted) {
     return (
       <div className="yes-screen">
-        <img src="https://www.nylabone.com/-/media/project/oneweb/nylabone/images/dog101/10-intelligent-dog-breeds/golden-retriever-tongue-out.jpg?h=430&w=710&hash=7FEB820D235A44B76B271060E03572C7
+        <img src="/youandme.JPG
             " alt="Us 💕" />
         <h1 className="text">
-          Best choice ever 💘
+          I really miss you my Bibi. Love you so much.
           <br />
-          I love you 😍
+          Thank you for being my Valentine 💘.
+           <br />
+            <br />
+           รักนะจุ๊บๆ 😘
         </h1>
         <button className="reset" onClick={reset}>
           Reset 🔄
@@ -33,20 +47,76 @@ export default function App() {
 
   return (
     <div className="container">
+      {loading && (
+        <div className="loading-overlay" aria-hidden="true">
+          <div className="loading-stack">
+            <div className="polaroid-card">
+              <img
+                src="/sushiro.jpeg"
+                alt=""
+              />
+              <div className="polaroid-caption">Sushiro Date</div>
+            </div>
+            <div className="polaroid-card">
+              <img
+                src="/sleeping.PNG"
+                alt=""
+              />
+              <div className="polaroid-caption">You and me at my room</div>
+            </div>
+            <div className="polaroid-card">
+              <img
+                src="/zootopia.PNG"
+                alt=""
+              />
+              <div className="polaroid-caption">Zootopia</div>
+            </div>
+            <div className="polaroid-card">
+              <img
+                src="/exercise.JPG"
+                alt=""
+              />
+              <div className="polaroid-caption">First time exercising together</div>
+            </div>
+            <div className="polaroid-card">
+              <img
+                src="/kitty.JPG"
+                alt=""
+              />
+              <div className="polaroid-caption">Merry and Chagee {">"}{"<"}</div>
+            </div>
+            <div className="polaroid-card">
+              <img
+                src="/sea.JPG"
+                alt=""
+              />
+              <div className="polaroid-caption">Beach trip with you</div>
+            </div>
+             <div className="polaroid-card">
+              <img
+                src="/airport.JPG"
+                alt=""
+              />
+              <div className="polaroid-caption">Back to BKK TT</div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="card">
-        <h1>Will you be my Valentine? 💖</h1>
+        <h2 className="pink-text">Will you be my Valentine? 💖</h2>
 
         <div className="buttons">
           <button
             className="yes"
             style={{ transform: `scale(${scale})` }}
-            onClick={() => setAccepted(true)}
+            onClick={() => setLoading(true)}
+            disabled={loading}
           >
             Yes 😍
           </button>
 
           {scale < 3 && (
-            <button className="no" onClick={handleNo}>
+            <button className="no" onClick={handleNo} disabled={loading}>
               No 🙃
             </button>
           )}
