@@ -1,10 +1,21 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import SorryPage from "./SorryPage";
 
 export default function App() {
+  const getPage = () =>
+    window.location.hash.replace("#", "") === "/sorry" ? "sorry" : "home";
+
   const [scale, setScale] = useState(1);
   const [accepted, setAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(getPage);
+
+  useEffect(() => {
+    const syncPage = () => setPage(getPage());
+    window.addEventListener("hashchange", syncPage);
+    return () => window.removeEventListener("hashchange", syncPage);
+  }, []);
 
   const handleNo = () => {
     setScale((prev) => Math.min(prev * 1.3, 5));
@@ -25,9 +36,16 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [loading]);
 
+  if (page === "sorry") {
+    return <SorryPage />;
+  }
+
   if (accepted) {
     return (
       <div className="yes-screen">
+        <a className="page-link" href="#/sorry">
+          Open Sorry Page
+        </a>
         <img src="/youandme.JPG
             " alt="Us 💕" />
         <h1 className="text">
@@ -47,6 +65,9 @@ export default function App() {
 
   return (
     <div className="container">
+      <a className="page-link" href="#/sorry">
+        Open Sorry Page
+      </a>
       {loading && (
         <div className="loading-overlay" aria-hidden="true">
           <div className="loading-stack">
