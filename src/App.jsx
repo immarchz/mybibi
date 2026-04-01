@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import SorryPage from "./SorryPage";
+import ApologyStepsPage from "./ApologyStepsPage";
 
 export default function App() {
-  const getPage = () =>
-    window.location.hash.replace("#", "") === "/sorry" ? "sorry" : "home";
+  const getPage = () => {
+    const route = window.location.hash.replace("#", "");
+
+    if (route === "/sorry") return "sorry";
+    if (route === "/apology") return "apology";
+    return "home";
+  };
 
   const [scale, setScale] = useState(1);
   const [accepted, setAccepted] = useState(false);
@@ -38,6 +44,10 @@ export default function App() {
 
   if (page === "sorry") {
     return <SorryPage />;
+  }
+
+  if (page === "apology") {
+    return <ApologyStepsPage />;
   }
 
   if (accepted) {

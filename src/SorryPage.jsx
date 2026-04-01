@@ -62,6 +62,10 @@ export default function SorryPage() {
           Some words I wanted to say, wrapped in a softer page.
         </p>
 
+        <a className="sorry-next-link" href="#/apology">
+          Open The Next Page
+        </a>
+
         <div className="sorry-lines">
           {messages.map((message, index) => (
             <p

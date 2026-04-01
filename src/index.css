@@ -1,10 +1,27 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&display=swap");
+
 :root {
-  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  font-family: "Noto Sans Thai", "Segoe UI", sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color: #2b1a1f;
-  background-color: #fff7f2;
+  color: #5b4250;
+  background-color: #fff5f0;
+
+  --bg-deep: #fff5f0;
+  --bg-mid: #f6e4e0;
+  --bg-soft: #efd6db;
+  --surface: rgba(255, 255, 255, 0.5);
+  --surface-strong: rgba(255, 255, 255, 0.74);
+  --surface-card: rgba(255, 252, 251, 0.92);
+  --text-main: #6c4555;
+  --text-soft: #9a7181;
+  --text-dark: #6b4252;
+  --accent: #d88a9e;
+  --accent-strong: #c06d83;
+  --accent-faint: rgba(216, 138, 158, 0.14);
+  --shadow-soft: 0 18px 40px rgba(152, 102, 120, 0.14);
+  --shadow-deep: 0 28px 70px rgba(152, 102, 120, 0.18);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
