@@ -1,158 +1,203 @@
-import { useEffect, useState } from "react";
-import "./App.css";
-import SorryPage from "./SorryPage";
-import ApologyStepsPage from "./ApologyStepsPage";
+import { useMemo, useState, useEffect, useRef } from "react";
+import "./index.css";
+import LovePage from "./LovePage";
+import TransitionPage from "./TransitionPage";
+import QuestionPage from "./QuestionPage";
+
+const YT_VIDEO_ID = "LXIEBWnqiBA";
+const YT_START = 33;
+const YT_END = 85;
+
+const RAIN_COUNT = 60;
+const STAR_COUNT = 40;
+
+const messages = [
+  "มี๊คับ นี่จ๋อยนะ ป๊าทำมี๊เสียใจอีกแล้วใช่มั้ย",
+  "ตอนป๊าทำ ป๊าไม่เคยคิดเลยว่ามันจะทำให้มี๊เสียใจขนาดนี้ แต่ตอนนี้ป๊ารู้แล้วว่าตัวเองผิดแค่ไหน",
+  "ป๊าฝากจ๋อยมาบอกมี๊ว่า มาร์ชขอโทษจริงๆ ที่พูดไม่ดี เอาแต่ตัวเอง และไม่เคยใส่ใจความรู้สึกของพีนัทมากพอ ทั้งที่พีนัทคอยเตือนเค้ามาตลอด",
+  "เค้าไม่มีข้อแก้ตัวอะไรเลย เค้าผิดจริงๆ",
+  "เค้าไม่เคยอยากให้เราต้องมาถึงจุดที่เสียความรู้สึกกันแบบนี้ และไม่เคยอยากเสียเธอไปเลย",
+  "ขอบคุณที่ยังอยู่กับเค้า และยังให้โอกาสเค้าอยู่",
+  "ป๊ามีอะไรให้ดูด้วยคับมี๊ กดต่อไปได้เลยคับบ"
+];
 
 export default function App() {
-  const getPage = () => {
-    const route = window.location.hash.replace("#", "");
-
-    if (route === "/sorry") return "sorry";
-    if (route === "/apology") return "apology";
-    return "home";
-  };
-
-  const [scale, setScale] = useState(1);
-  const [accepted, setAccepted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(getPage);
+  const [msgIndex, setMsgIndex] = useState(0);
+  const [musicOn, setMusicOn] = useState(false);
+  const [page, setPage] = useState("sad");
+  const playerRef = useRef(null);
+  const ytReadyRef = useRef(false);
 
   useEffect(() => {
-    const syncPage = () => setPage(getPage());
-    window.addEventListener("hashchange", syncPage);
-    return () => window.removeEventListener("hashchange", syncPage);
+    const initPlayer = () => {
+      playerRef.current = new window.YT.Player("yt-player", {
+        videoId: YT_VIDEO_ID,
+        playerVars: {
+          start: YT_START,
+          end: YT_END,
+          autoplay: 0,
+          controls: 0,
+          loop: 1,
+          playlist: YT_VIDEO_ID,
+          mute: 0,
+        },
+        events: {
+          onStateChange: (e) => {
+            if (e.data === window.YT.PlayerState.ENDED) {
+              playerRef.current.seekTo(YT_START, true);
+              playerRef.current.playVideo();
+            }
+          },
+        },
+      });
+      ytReadyRef.current = true;
+    };
+
+    if (window.YT && window.YT.Player) {
+      initPlayer();
+    } else {
+      window.onYouTubeIframeAPIReady = initPlayer;
+      if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+        const tag = document.createElement("script");
+        tag.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(tag);
+      }
+    }
+    return () => {
+      if (playerRef.current) playerRef.current.destroy();
+    };
   }, []);
 
-  const handleNo = () => {
-    setScale((prev) => Math.min(prev * 1.3, 5));
+  const toggleMusic = () => {
+    if (!playerRef.current || !ytReadyRef.current) return;
+    if (!musicOn) {
+      playerRef.current.seekTo(YT_START, true);
+      playerRef.current.playVideo();
+      setMusicOn(true);
+    } else {
+      playerRef.current.pauseVideo();
+      setMusicOn(false);
+    }
   };
 
-  const reset = () => {
-    setScale(1);
-    setAccepted(false);
-    setLoading(false);
+  const drops = useMemo(() =>
+    Array.from({ length: RAIN_COUNT }, (_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      height: `${60 + Math.random() * 80}px`,
+      duration: `${0.6 + Math.random() * 0.8}s`,
+      delay: `${Math.random() * 3}s`,
+      opacity: 0.2 + Math.random() * 0.4,
+    })), []
+  );
+
+  const stars = useMemo(() =>
+    Array.from({ length: STAR_COUNT }, (_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 70}%`,
+      size: `${1 + Math.random() * 2}px`,
+      duration: `${2 + Math.random() * 3}s`,
+      delay: `${Math.random() * 4}s`,
+    })), []
+  );
+
+  const handleNext = () => {
+    if (msgIndex < messages.length - 1) {
+      setMsgIndex((prev) => prev + 1);
+    }
   };
 
-  useEffect(() => {
-    if (!loading) return;
-    const timer = setTimeout(() => {
-      setAccepted(true);
-      setLoading(false);
-    }, 18000);
-    return () => clearTimeout(timer);
-  }, [loading]);
-
-  if (page === "sorry") {
-    return <SorryPage />;
-  }
-
-  if (page === "apology") {
-    return <ApologyStepsPage />;
-  }
-
-  if (accepted) {
-    return (
-      <div className="yes-screen">
-        <a className="page-link" href="#/sorry">
-          Open Sorry Page
-        </a>
-        <img src="/youandme.JPG
-            " alt="Us 💕" />
-        <h1 className="text">
-          I really miss you my Bibi. Love you so much.
-          <br />
-          Thank you for being my Valentine 💘.
-           <br />
-            <br />
-           รักนะจุ๊บๆ 😘
-        </h1>
-        <button className="reset" onClick={reset}>
-          Reset 🔄
-        </button>
-      </div>
-    );
-  }
+  const goToLove = () => {
+    setPage("question");
+  };
 
   return (
-    <div className="container">
-      <a className="page-link" href="#/sorry">
-        Open Sorry Page
-      </a>
-      {loading && (
-        <div className="loading-overlay" aria-hidden="true">
-          <div className="loading-stack">
-            <div className="polaroid-card">
-              <img
-                src="/sushiro.jpeg"
-                alt=""
-              />
-              <div className="polaroid-caption">Sushiro Date</div>
-            </div>
-            <div className="polaroid-card">
-              <img
-                src="/sleeping.PNG"
-                alt=""
-              />
-              <div className="polaroid-caption">You and me at my room</div>
-            </div>
-            <div className="polaroid-card">
-              <img
-                src="/zootopia.PNG"
-                alt=""
-              />
-              <div className="polaroid-caption">Zootopia</div>
-            </div>
-            <div className="polaroid-card">
-              <img
-                src="/exercise.JPG"
-                alt=""
-              />
-              <div className="polaroid-caption">First time exercising together</div>
-            </div>
-            <div className="polaroid-card">
-              <img
-                src="/kitty.JPG"
-                alt=""
-              />
-              <div className="polaroid-caption">Merry and Chagee {">"}{"<"}</div>
-            </div>
-            <div className="polaroid-card">
-              <img
-                src="/sea.JPG"
-                alt=""
-              />
-              <div className="polaroid-caption">Beach trip with you</div>
-            </div>
-             <div className="polaroid-card">
-              <img
-                src="/airport.JPG"
-                alt=""
-              />
-              <div className="polaroid-caption">Back to BKK TT</div>
-            </div>
-          </div>
-        </div>
-      )}
-      <div className="card">
-        <h2 className="pink-text">Will you be my Valentine? 💖</h2>
+    <>
+      {/* YouTube player — always mounted so music survives page switch */}
+      <div id="yt-player" style={{ display: "none" }} />
 
-        <div className="buttons">
-          <button
-            className="yes"
-            style={{ transform: `scale(${scale})` }}
-            onClick={() => setLoading(true)}
-            disabled={loading}
-          >
-            Yes 😍
-          </button>
+      {page === "question" ? (
+        <QuestionPage onDone={() => {
+          if (playerRef.current && ytReadyRef.current && !musicOn) {
+            playerRef.current.seekTo(YT_START, true);
+            playerRef.current.playVideo();
+            setMusicOn(true);
+          }
+          setPage("transition");
+        }} />
+      ) : page === "transition" ? (
+        <TransitionPage onDone={() => setPage("love")} />
+      ) : page === "love" ? (
+        <LovePage musicOn={musicOn} toggleMusic={toggleMusic} />
+      ) : (
+      <div className="sad-bg">
+      {/* Rain */}
+      <div className="rain">
+        {drops.map((d) => (
+          <div
+            key={d.id}
+            className="drop"
+            style={{
+              left: d.left,
+              height: d.height,
+              animationDuration: d.duration,
+              animationDelay: d.delay,
+              opacity: d.opacity,
+            }}
+          />
+        ))}
+      </div>
 
-          {scale < 3 && (
-            <button className="no" onClick={handleNo} disabled={loading}>
-              No 🙃
+      {/* Stars / dust */}
+      <div className="stars">
+        {stars.map((s) => (
+          <div
+            key={s.id}
+            className="star"
+            style={{
+              left: s.left,
+              top: s.top,
+              width: s.size,
+              height: s.size,
+              animationDuration: s.duration,
+              animationDelay: s.delay,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Fog */}
+      <div className="fog">
+        <div className="fog-layer" />
+        <div className="fog-layer" />
+        <div className="fog-layer" />
+      </div>
+
+      {/* Bear + speech bubble as one unit */}
+      <div className="bear-unit">
+        <div className="speech-bubble" onClick={handleNext}>
+          <p key={msgIndex} className="bubble-text">{messages[msgIndex]}</p>
+          {msgIndex < messages.length - 1 ? (
+            <span className="bubble-hint">แตะเพื่อถัดไป ▶</span>
+          ) : (
+            <button
+              className="go-next-btn"
+              onClick={(e) => { e.stopPropagation(); goToLove(); }}
+            >
+              ถัดไป →
             </button>
           )}
+          <div className="bubble-dots">
+            {messages.map((_, i) => (
+              <span key={i} className={`dot ${i === msgIndex ? "active" : ""}`} />
+            ))}
+          </div>
         </div>
+        <img src="/จ๋อย.png" alt="Grumpy Bear" className="bear-img" />
       </div>
     </div>
+      )}
+    </>
   );
 }
